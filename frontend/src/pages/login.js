@@ -8,6 +8,7 @@ import { Container } from "@mui/material";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { getCookieValue } from "../utils/tasksUtility";
 
 const Login = ({settoken}) => {
   const navigate = useNavigate();
@@ -15,16 +16,8 @@ const Login = ({settoken}) => {
     username: "",
     password: "",
   });
-  const getCookieValue = (name) => {
-    const cookies = document.cookie.split("; ");
-    for (const cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName === name) {
-        return cookieValue;
-      }
-    }
-    return null;
-  };
+
+;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

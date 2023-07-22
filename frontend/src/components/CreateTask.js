@@ -11,6 +11,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import { createTask } from "../utils/tasksUtility";
 
 const EditTaskForm = () => {
   const [taskData, setTaskData] = useState({
@@ -21,11 +22,27 @@ const EditTaskForm = () => {
   });
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here, you can handle the form submission, like sending the data to the server or performing any other actions.
-    console.log(taskData);
+    try {
+      const createdTask = await createTask(taskData);
+      if (createdTask) {
+        setTaskData({
+          title: "",
+          description: "",
+          dueDate: "",
+          status: "pending",
+        });
+        alert("Task created successfully!");
+      } else {
+        alert("Failed to create the task.");
+      }
+    } catch (error) {
+      alert("An error occurred while creating the task.");
+      console.error(error);
+    }
   };
+  
 
   // Function to handle changes in the form fields
   const handleChange = (e) => {
@@ -90,6 +107,7 @@ const EditTaskForm = () => {
                 required
                 fullWidth
                 type="date"
+                name="dueDate"
                 InputProps={{
                     placeholder: 'Due date',
                   }}

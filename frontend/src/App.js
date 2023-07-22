@@ -7,16 +7,19 @@ import EditTask from "./pages/edittask";
 import React, { useEffect, useState } from "react";
 
 const App = () => {
-  const [token, settoken] = useState(null)
-
   const isTokenPresent = () => {
     const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
     return cookies.some((cookie) => cookie.startsWith("token="));
   };
+  
+  const [token, settoken] = useState(isTokenPresent() || null)
+
+
 
   useEffect(() => {
     let newToken = isTokenPresent()
     settoken(newToken)
+    console.log("TOken is ", token)
   
     
   },[])
@@ -30,7 +33,7 @@ const App = () => {
         <>
         <Route path="/" element={<Tasks />} />
         <Route path="/newtask" element={<NewTask />} />
-        <Route path="/edittask" element={<EditTask />} />
+        <Route path="/edittask/:id" element={<EditTask />} />
         </>
         }
         <Route path="*" element={<Navigate to="/login" />} />

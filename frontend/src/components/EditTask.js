@@ -1,30 +1,26 @@
-import { useState } from "react";
-import {
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Grid,
-  Container,
-  Box,
-  Typography,
-} from "@mui/material";
+import { useState, useEffect } from "react";
+import { TextField, FormControl, InputLabel, Select, MenuItem, Button, Grid, Container, Box, Typography } from "@mui/material";
+import { getTaskById, updateTaskById } from "../utils/tasksUtility";
 
-const EditTaskForm = () => {
+const EditTaskForm = ({ taskId }) => {
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
-    dueDate: "",
+    dueDate: "", // Change the initial value of dueDate to an empty string
     status: "pending",
   });
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here, you can handle the form submission, like sending the data to the server or performing any other actions.
-    console.log(taskData);
+    try {
+      // Update the task using the utility function
+      await updateTaskById(taskId, taskData);
+      // Redirect to the home page (replace this with the correct route for your home page)
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
   // Function to handle changes in the form fields
@@ -34,6 +30,30 @@ const EditTaskForm = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  // Fetch the current task when the component mounts
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        // Get the task using the utility function
+        const task = await getTaskById(taskId);
+        // Set the form fields with the task values
+        setTaskData(task);
+      } catch (error) {
+        console.error("Error fetching task:", error);
+      }
+    };
+
+    fetchTask();
+  }, [taskId]);
+
+  // Function to format the date from the backend to a valid date string for the input field
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return ""; // Handle the case when dateString is empty or null
+    const date = new Date(dateString);
+    const formattedDate = date.toISOString().split("T")[0];
+    return formattedDate;
   };
 
   return (
@@ -58,8 +78,8 @@ const EditTaskForm = () => {
             container
             spacing={2}
             sx={{
-                padding:"16px 8px",
-                borderRadius:"8px",
+              padding: "16px 8px",
+              borderRadius: "8px",
               boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;",
             }}
           >
@@ -91,10 +111,11 @@ const EditTaskForm = () => {
                 fullWidth
                 type="date"
                 InputProps={{
-                    placeholder: 'Due date',
-                  }}
-                value={taskData.dueDate}
+                  placeholder: "Due date",
+                }}
+                value={formatDateForInput(taskData.dueDate)} // Format the date for the input field
                 onChange={handleChange}
+                name="dueDate" // Add the name attribute for the input field
               />
             </Grid>
             <Grid item xs={12}>
@@ -113,7 +134,7 @@ const EditTaskForm = () => {
             </Grid>
             <Grid item xs={12} display={"flex"} justifyContent={"center"}>
               <Button variant="contained" color="primary" type="submit">
-                Create Task
+                Update Task
               </Button>
             </Grid>
           </Grid>
