@@ -5,24 +5,40 @@ import Tasks from "./pages/taskdetails";
 import NewTask from "./pages/newtask";
 import EditTask from "./pages/edittask";
 import React, { useEffect, useState } from "react";
-import PrivateRoute from "./PrivateRoute";
 
 const App = () => {
-  
-  
+  const [token, settoken] = useState(null)
 
+  const isTokenPresent = () => {
+    const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
+    return cookies.some((cookie) => cookie.startsWith("token="));
+  };
+
+  useEffect(() => {
+    let newToken = isTokenPresent()
+    settoken(newToken)
+  
+    
+  },[])
+  
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={<PrivateRoute element={<Tasks />} />} />
-      <Route path="/newtask" element={<PrivateRoute element={<NewTask />} />} /> 
-      <Route path="/edittask" element={<PrivateRoute element={<EditTask />} />} />
-    </Routes>
-  </BrowserRouter>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login settoken={settoken} />} />
+        {token && 
+        <>
+        <Route path="/" element={<Tasks />} />
+        <Route path="/newtask" element={<NewTask />} />
+        <Route path="/edittask" element={<EditTask />} />
+        </>
+        }
+        <Route path="*" element={<Navigate to="/login" />} />
+
+
+      </Routes>
+    </BrowserRouter>
   );
 };
-
 
 export default App;

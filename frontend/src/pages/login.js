@@ -9,12 +9,22 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({settoken}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  const getCookieValue = (name) => {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split("=");
+      if (cookieName === name) {
+        return cookieValue;
+      }
+    }
+    return null;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,10 +39,11 @@ const Login = () => {
     let route = process.env.ROUTE || "http://localhost:5000";
     try {
       const response = await axios.post(`${route}/auth/login`, formData, { withCredentials: true });
-
-    console.log("--------") 
-      console.log(response.data)
-    console.log("--------") 
+      if(response.data.user){
+        const tokenFromCookie = getCookieValue("token");
+        settoken(tokenFromCookie)
+      }
+    
       alert("User login");
       navigate("/");
     } catch (error) {
