@@ -10,8 +10,16 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
-app.use(cookieParser())
+
+app.use(cookieParser());
+
+const corsOptions = {
+  origin: 'http://localhost:3000', // change this to your frontend origin
+  credentials: true // this allows cookies
+};
+
+// Use cors middleware with options
+app.use(cors(corsOptions));
 
 
 // Connect to MongoDB database

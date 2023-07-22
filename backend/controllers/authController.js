@@ -30,7 +30,7 @@ const loginUser = async (req, res, next) => {
     const token = jwt.sign({id: user._id}, jwtSecret)
     if(user) {
        const {password , ...userRes} = user._doc
-       return res.status(201).cookie('token', {token}, {httpOnly: true}).json({user: userRes})
+       return res.status(201).cookie('token', {token}).json({user: userRes})
     }
   } catch (error) {
     next(error);
